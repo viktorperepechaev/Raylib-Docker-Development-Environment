@@ -1,0 +1,13 @@
+services:
+  my-app:
+    platform: linux/amd64
+    build: .
+    environment:
+      - DISPLAY=:100
+      - XPRA_PORT=${XPRA_PORT:-10000}
+      - WATCH_DIR=/app/src
+    volumes:
+      - ./src:/app/src/
+    ports:
+      - "${XPRA_PORT:-10000}:${XPRA_PORT:-10000}"
+    command: /app/entrypoint.sh 
