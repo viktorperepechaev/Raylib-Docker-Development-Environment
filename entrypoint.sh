@@ -5,15 +5,21 @@ trap "echo 'Shutting down...'; kill 0; exit" INT TERM
 start_application() {
   echo 'Compiling application...'
   cd /app/src
-  g++ main.cpp -o main -lraylib -lGL -lm -lpthread -ldl -lrt -lX11
+  g++ main.cpp -o main -lraylib -lX11
   
-  echo 'Stopping previous XPRA instance...'
-  pkill -f "xpra start" || true
-  sleep 0.5
+  if pkill -f "xpra start"; then
+    echo 'Stopping previous XPRA instance...'
+    sleep 0.3
+  fi
   
   echo 'Launching application via XPRA...'
 
-  xpra start --bind-tcp=0.0.0.0:$XPRA_PORT --start-child="/app/src/main" --exit-with-children --daemon=no --no-mdns --keyboard-layout=us --dpi=96 --log-file=/dev/stdout &
+  xpra start --bind-tcp=0.0.0.0:$XPRA_PORT \
+             --start-child="/app/src/main" \
+             --exit-with-children \
+             --daemon=no \
+             --no-mdns \
+             --log-file=/dev/stdout &
 }
 
 start_application
